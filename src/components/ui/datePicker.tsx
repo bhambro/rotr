@@ -10,12 +10,13 @@ import { Calendar } from "./calendar";
 import { useState } from "react";
 
 export interface DatePickerProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    label: string,
+    label?: string,
     dateValue: Date | undefined
     onDateChanged: (date: Date | undefined) => void
+    errors?: string[]
 }
 
-export default function DatePicker({ label, dateValue, onDateChanged, ...props } : DatePickerProps) {
+export default function DatePicker({ label, dateValue, onDateChanged, errors, ...props } : DatePickerProps) {
 
     const formatDate = (date: Date) => {
         return moment(date).format("DD/MM/YYYY");
@@ -30,9 +31,11 @@ export default function DatePicker({ label, dateValue, onDateChanged, ...props }
 
     return (
         <div {...props}>
-            <div className="mb-1">
-                <label>{label}</label>
-            </div>
+            {label != null && (
+                <div className="mb-1">
+                    <label>{label}</label>
+                </div>
+            )}
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
@@ -57,6 +60,9 @@ export default function DatePicker({ label, dateValue, onDateChanged, ...props }
                     ></Calendar>
                 </PopoverContent>
             </Popover>
+            {errors && (
+                <div className="mt-1 text-sm text-red-500">{errors.join(", ")}</div>
+            )}
         </div>
     )
 

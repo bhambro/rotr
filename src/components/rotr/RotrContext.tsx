@@ -5,10 +5,13 @@ import { Dispatch, createContext } from "react";
 import { Turn } from "@/lib/types/turn";
 import { Person } from "@/lib/types/person";
 import { useImmerReducer } from "use-immer";
+import { Schedule } from "@/lib/types/schedule";
+import { createTurns, getNextTurnDate } from "@/lib/turnFactory";
 
 type RotrData = {
     people: Person[]
     turns: Turn[]
+    schedule?: Schedule
     generated: boolean
 }
 
@@ -28,7 +31,6 @@ const RotrDispatchContext = React.createContext<Dispatch<RotrAction>>({} as Disp
 
 export function RotrProvider({ children } : { children: React.ReactNode }) {
     
-
     const [data, dispatch] = useImmerReducer<RotrData, RotrAction>(
         (draft, action) => {
 
@@ -37,6 +39,13 @@ export function RotrProvider({ children } : { children: React.ReactNode }) {
                 case "turn.move": {
 
                     const { dragIndex, hoverIndex } : { dragIndex: number, hoverIndex: number } = action.data;
+
+                    const dragDate = draft.turns[dragIndex].date;
+                    const hoverDate = draft.turns[hoverIndex].date;
+
+                    // Swap the dates
+                    draft.turns[dragIndex].date = hoverDate;
+                    draft.turns[hoverIndex].date = dragDate;
 
                     const dragItem = Object.assign(draft.turns[dragIndex]);
                     draft.turns.splice(dragIndex, 1);
@@ -63,6 +72,11 @@ export function RotrProvider({ children } : { children: React.ReactNode }) {
                         personId: person.id
                     };
 
+                    if (draft.schedule && draft.turns.length > 0) {
+                        const lastTurn = draft.turns[draft.turns.length -1];
+                        turn.date = getNextTurnDate(lastTurn, draft.schedule.interval);
+                    }
+
                     draft.people.push(person);
                     draft.turns.push(turn);
 
@@ -77,6 +91,16 @@ export function RotrProvider({ children } : { children: React.ReactNode }) {
 
                     if (person)
                         person.name = name;
+
+                    break;
+                }
+
+                case "schedule.set": {
+                    const schedule = action.data as Schedule;
+                    draft.schedule = schedule;
+
+                    const turns = createTurns(draft.turns, schedule);
+                    draft.turns = turns;
 
                     break;
                 }

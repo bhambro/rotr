@@ -14,9 +14,10 @@ export interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElem
     onValueChanged: (value: string | undefined) => void
     placeholder?: string
     label: string
+    errors?: string[]
 }
 
-export default function Dropdown({ options, value, onValueChanged, placeholder, label, ...props } : DropdownProps) {
+export default function Dropdown({ options, value, onValueChanged, placeholder, label, errors, ...props } : DropdownProps) {
 
     return (
         <div>
@@ -33,6 +34,9 @@ export default function Dropdown({ options, value, onValueChanged, placeholder, 
                     ))}
                 </SelectContent>
             </Select>
+            {errors && (
+                <div className="mt-1 text-sm text-red-500">{errors.join(", ")}</div>
+            )}
         </div>
     )
 

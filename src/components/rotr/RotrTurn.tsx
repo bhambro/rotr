@@ -9,6 +9,7 @@ import { Person } from "@/lib/types/person";
 import DiscreteInput from "../ui/discreteInput";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { formatTurnDate } from "@/lib/dateFormats";
 
 export interface RotrTurnProps {
     turn: Turn
@@ -109,6 +110,9 @@ export default function RotrTurn({ turn, index, moveTurn, initialFocus } : RotrT
         });
     };
 
+    const dateFormatted = turn.date && rotr.schedule ? formatTurnDate(turn.date, rotr.schedule) : null;
+
+
     return (
         <div ref={ref}
             className={cn([
@@ -116,8 +120,11 @@ export default function RotrTurn({ turn, index, moveTurn, initialFocus } : RotrT
                 isDragging ? "opacity-0" : "opacity-100"
             ])}>
 
-            <div className="bg-slate-100 rounded-xl h-[50px] w-[50px] text-center flex items-center justify-center">
-                <h2># {index + 1}</h2>
+            <div className="bg-slate-100 rounded-xl h-[50px] w-[80px] text-center flex items-center justify-center">
+                {dateFormatted != null
+                    ? <h2 className="text-sm">{dateFormatted}</h2>
+                    : <h2># {index + 1}</h2>
+                }
             </div>
 
             <DiscreteInput
