@@ -6,7 +6,7 @@ import { Turn } from "@/lib/types/turn";
 import { Person } from "@/lib/types/person";
 import { useImmerReducer } from "use-immer";
 import { Schedule } from "@/lib/types/schedule";
-import { createTurns, getNextTurnDate } from "@/lib/turnFactory";
+import { createTurns, getNextTurnDate, getShuffledPersonIds } from "@/lib/turnFactory";
 
 type RotrData = {
     people: Person[]
@@ -50,6 +50,17 @@ export function RotrProvider({ children } : { children: React.ReactNode }) {
                     const dragItem = Object.assign(draft.turns[dragIndex]);
                     draft.turns.splice(dragIndex, 1);
                     draft.turns.splice(hoverIndex, 0, dragItem);
+
+                    break;
+                }
+
+                case "turns.shuffle": {
+                    
+                    const shuffledPeople = getShuffledPersonIds(draft.turns);
+
+                    draft.turns.forEach((turn, index) => {
+                        turn.personId = shuffledPeople[index];
+                    });
 
                     break;
                 }

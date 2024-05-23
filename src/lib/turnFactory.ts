@@ -36,6 +36,25 @@ export function createTurns(initialTurns: Turn[], schedule: Schedule) : Turn[] {
     return turns;
 }
 
+export function getNextTurnDate(previous: Turn, interval: ScheduleInterval) : Date {
+    const previousDate = moment(previous.date);
+    const nextDate = getNextDate(previousDate, interval);
+    return nextDate.toDate();
+}
+
+export function getShuffledPersonIds(turns: Turn[]) : number[] {
+
+    let personIds = turns.map(x => x.personId);
+
+    for (let i = personIds.length -1; i > 0; i--) {
+        const r = Math.floor(Math.random() * (i + 1));
+        [personIds[i], personIds[r]] = [personIds[r], personIds[i]];
+    }
+
+    return personIds;
+
+}
+
 function getUniquePeople(turns: Turn[]) {
     return turns.filter((v, i, self) => {
         return i == self.findIndex(x => x.personId === v.personId);
@@ -56,10 +75,4 @@ function getNextDate(previous: Moment, interval: ScheduleInterval) : Moment {
         case ScheduleInterval.MONTHLY:
             return previous.add(1, "month");
     }
-}
-
-export function getNextTurnDate(previous: Turn, interval: ScheduleInterval) : Date {
-    const previousDate = moment(previous.date);
-    const nextDate = getNextDate(previousDate, interval);
-    return nextDate.toDate();
 }

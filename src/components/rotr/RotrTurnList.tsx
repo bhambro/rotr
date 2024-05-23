@@ -7,7 +7,7 @@ import RotrTurn from "./RotrTurn";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClock, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faPlus, faShuffle } from "@fortawesome/free-solid-svg-icons";
 import ScheduleDrawer from "./ScheduleDrawer";
 import { Button } from "../ui/button";
 
@@ -33,6 +33,12 @@ export default function RotrTurnList() {
         })
     };
 
+    const handleShuffle = () => {
+        dispatch({
+            type: "turns.shuffle"
+        })
+    };
+
     const renderTurn = useCallback(
         (turn: Turn, index: number, initialFocus: boolean) => {
             return (
@@ -48,7 +54,7 @@ export default function RotrTurnList() {
     );
 
     const scheduleButton = (
-        <Button variant="secondary" size="lg" className="w-[44rem]">
+        <Button variant="secondary" size="lg" className="w-full">
             <h3>
                 <FontAwesomeIcon icon={faClock} />
                 <span className="ms-2">{rotr.schedule ? "Edit" : "Add"} schedule</span>
@@ -70,7 +76,13 @@ export default function RotrTurnList() {
                 )}
 
                 {rotr.turns.length > 1 && (
-                    <ScheduleDrawer button={scheduleButton} />
+                    <div className="flex justify-between gap-5 mt-2">
+                        <ScheduleDrawer button={scheduleButton} />
+                        <Button variant="secondary" size="lg" className="w-full" onClick={handleShuffle}>
+                            <FontAwesomeIcon icon={faShuffle} />
+                            <span className="ms-2">Shuffle</span>
+                        </Button>
+                    </div>
                 )}
 
             </div>

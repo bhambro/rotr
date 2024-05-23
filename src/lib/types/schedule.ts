@@ -24,7 +24,7 @@ export const ScheduleSchema = z.object({
     interval: z.nativeEnum(ScheduleInterval, { required_error: "Required" }),
     endType: z.nativeEnum(ScheduleEndType),
     endDate: z.date().optional(),
-    endAfterOccurrence: z.number().positive("Must be a positive number").optional()
+    endAfterOccurrence: z.coerce.number().optional()
 }).superRefine((input, context) => {
     if (input.endType === ScheduleEndType.OCCURRENCES && input.endAfterOccurrence == undefined) {
         return context.addIssue({

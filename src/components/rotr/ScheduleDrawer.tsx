@@ -28,7 +28,7 @@ export default function ScheduleDrawer({ button } : ScheduleDrawerProps) {
     const [interval, setInterval] = useState<ScheduleInterval>();
     const [endType, setEndType] = useState<ScheduleEndType>(ScheduleEndType.DATE);
     const [endDate, setEndDate] = useState<Date>();
-    const [occurrences, setOccurrences] = useState<number>(0);
+    const [occurrences, setOccurrences] = useState("");
     const [errors, setErrors] = useState<FieldErrors>();
 
     const intervalOptions : DropdownOption[] = [
@@ -43,11 +43,6 @@ export default function ScheduleDrawer({ button } : ScheduleDrawerProps) {
         { label: "After occurrences", value: "occurrences" }
     ];
 
-    const parseSetOccurrences = (value: string) => {
-        const parsed = parseInt(value);
-        setOccurrences(isNaN(parsed) ? 0 : parsed);
-    };
-
     const rotr = useRotr();
     const dispatch = useRotrDispatch();
 
@@ -57,7 +52,7 @@ export default function ScheduleDrawer({ button } : ScheduleDrawerProps) {
             setStartDate(rotr.schedule.startDate);
             setInterval(rotr.schedule.interval);
             setEndDate(rotr.schedule.endDate);
-            setOccurrences(rotr.schedule.endAfterOccurrence);
+            setOccurrences(rotr.schedule.endAfterOccurrence + "");
             setEndType(rotr.schedule.endAfterOccurrence > 0 ? ScheduleEndType.OCCURRENCES : ScheduleEndType.DATE);
         }
 
@@ -128,7 +123,7 @@ export default function ScheduleDrawer({ button } : ScheduleDrawerProps) {
                                     <Input 
                                         type="number" 
                                         value={occurrences} 
-                                        onChange={(e) => parseSetOccurrences(e.target.value)}
+                                        onChange={(e) => setOccurrences(e.target.value)}
                                         errors={errors?.endAfterOccurrence} 
                                         className="w-[280px]" />
                                 )}
